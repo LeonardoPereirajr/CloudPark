@@ -54,11 +54,26 @@ def vehicle_api(request, id=0):
 
     elif request.method == 'POST':
         vehicle_data = JSONParser().parse(request)
-        vehicle_serializer = VehicleSerializer(data=vehicle_data)
-        if vehicle_serializer.is_valid():
-            vehicle_serializer.save()
-            return JsonResponse("Added Successfully!!", safe=False)
-        return JsonResponse("Failed to Add.", safe=False)
+        plate = vehicle_data.get('plate')
+
+        existing_vehicle = Vehicle.objects.filter(plate=plate).first()
+
+        if existing_vehicle:
+            if existing_vehicle.customer_id is None:
+                vehicle_serializer = VehicleSerializer(existing_vehicle, data=vehicle_data)
+                if vehicle_serializer.is_valid():
+                    vehicle_serializer.save()
+                    return JsonResponse("Added Successfully!!", safe=False)
+                return JsonResponse("Failed to Add.", safe=False)
+            else:
+                return JsonResponse("Vehicle already linked to a customer.", safe=False)
+        else:
+
+            vehicle_serializer = VehicleSerializer(data=vehicle_data)
+            if vehicle_serializer.is_valid():
+                vehicle_serializer.save()
+                return JsonResponse("Added Successfully!!", safe=False)
+            return JsonResponse("Failed to Add.", safe=False)
 
     elif request.method == 'PUT':
         vehicle_data = JSONParser().parse(request)
