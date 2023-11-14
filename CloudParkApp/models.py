@@ -24,6 +24,30 @@ def get_vehicle_info_by_id(vehicle_id):
     except Vehicle.DoesNotExist:
         return None
 
+def get_plan_description_by_vehicle_id(vehicle_id):
+    print(f"vehicle_id: {vehicle_id}")
+    try:
+        vehicle_info = get_vehicle_info_by_id(vehicle_id)
+
+        if vehicle_info:
+            customer_plan = CustomerPlan.objects.filter(customer_id=vehicle_info['customer_id']).first()
+            print(f"customer_plan: {customer_plan}")
+            if customer_plan:
+                plan_id = customer_plan.plan_id
+                plan_description = Plan.objects.filter(id=plan_id).values('description').first()
+                print(f"plan_description: {plan_description}")
+                if plan_description:
+                    return plan_description['description']
+                else:
+                    return None
+            else:
+                return None
+        else:
+            return None
+    except Exception as e:
+        print(f"Error getting plan description: {str(e)}")
+        return None
+
 class Plan(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=50)
@@ -35,8 +59,8 @@ class CustomerPlan(models.Model):
     plan_id = models.ForeignKey(Plan, on_delete=models.CASCADE)
     due_date = models.DateTimeField(null=True)
 
-    def has_monthly_plan(self):
-        return self.customerplan_set.filter(plan__description='Mensal').exists()
+def has_monthly_plan(customer_id):
+    return CustomerPlan.objects.filter(customer_id=customer_id, plan_id__description='Mensal').exists()
 
 class Contract(models.Model):
     id = models.AutoField(primary_key=True)
