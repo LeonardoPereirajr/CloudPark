@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { AppComponent } from './app.component';
 import { ContractComponent } from './contract/contract.component';
 import { AddEditContractComponent } from './contract/add-edit-contract/add-edit-contract.component';
 import { ShowContractComponent } from './contract/show-contract/show-contract.component';
@@ -20,6 +19,10 @@ import { ShowVehicleComponent } from './vehicle/show-vehicle/show-vehicle.compon
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedService } from './shared.service';
+
+import {HttpClientModule} from '@angular/common/http';
+import {FormsModule,ReactiveFormsModule} from '@angular/forms';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 @NgModule({
   declarations: [
@@ -44,8 +47,16 @@ import { SharedService } from './shared.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [SharedService],
-  bootstrap: []
 })
-export class AppModule { }
+export class AppModule {
+  ngDoBootstrap() {}
+}
+
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
+  .catch((err) => console.error(err));

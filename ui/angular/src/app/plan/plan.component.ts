@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-plan',
   templateUrl: './plan.component.html',
-  styleUrl: './plan.component.css'
+  styleUrls: ['./plan.component.css']
 })
 export class PlanComponent implements OnInit {
 
