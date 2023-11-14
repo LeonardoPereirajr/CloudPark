@@ -258,9 +258,9 @@ def park_movement_api(request, id=0):
             vehicle_serializer = VehicleSerializer(data={'id': park_movement_data['vehicle_id']})
             print(f"vehicle_serializer: {vehicle_serializer.is_valid()}")
             if vehicle_serializer.is_valid():
-                customer_id = get_customer_id_by_vehicle_id(park_movement_data.get('vehicle_id'))
+                customer_id = get_vehicle_info_by_id(park_movement_data.get('vehicle_id'))
                 print(f"vehicle.customer_id: {customer_id}")
-                # Continue com a lógica de salvamento do veículo
+
                 if customer_id:
                     vehicle_serializer.save(customer_id=customer_id)
                     return JsonResponse("Added Successfully!!", safe=False)
