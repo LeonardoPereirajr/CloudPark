@@ -247,11 +247,9 @@ def park_movement_api(request, id=0):
             exit_date = parse_datetime(park_data['exit_date']) if park_data['exit_date'] else None
             vehicle_id = int(park_data['vehicle_id'])
 
-            # Verifica se o veículo já está no pátio
             existing_movement = ParkMovement.objects.filter(vehicle_id=vehicle_id, exit_date__isnull=True).first()
 
             if exit_date:
-                # Se exit_date fornecido, registra a saída
                 if existing_movement:
                     existing_movement.exit_date = exit_date
                     existing_movement.save()
@@ -259,17 +257,13 @@ def park_movement_api(request, id=0):
                 else:
                     return JsonResponse({"error": "Vehicle not found in the parking lot"}, status=404)
             else:
-                # Se exit_date não fornecido, registra a entrada
                 if existing_movement:
                     return JsonResponse({"error": "Vehicle is already in the parking lot"}, status=400)
                 else:
-                    # Obtém a instância do veículo
                     vehicle = Vehicle.objects.get(id=vehicle_id)
 
-                    # Registra a entrada
                     ParkMovement.objects.create(entry_date=entry_date, vehicle_id=vehicle)
                     
-                    # Obtém informações do veículo
                     vehicle_info = get_vehicle_info_by_id(vehicle_id)
 
                     return JsonResponse({
