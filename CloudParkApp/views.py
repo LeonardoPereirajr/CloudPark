@@ -253,7 +253,17 @@ def park_movement_api(request, id=0):
                 if existing_movement:
                     existing_movement.exit_date = exit_date
                     existing_movement.save()
-                    return JsonResponse({"message": "Exit Registered"}, status=200)
+
+                    value = calculate_parking_fee(existing_movement.entry_date, exit_date)
+                    vehicle_info = get_vehicle_info_by_id(vehicle_id)
+                    monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
+                    return JsonResponse({
+                        "message": "Exit Registered",
+                        "customer_id": vehicle_info['customer_id'],
+                        "plate": vehicle_info['plate'],
+                        "monthlyPayer": monthly_payer,
+                        "value": value
+                    }, status=200)
                 else:
                     return JsonResponse({"error": "Vehicle not found in the parking lot"}, status=404)
             else:
@@ -262,16 +272,22 @@ def park_movement_api(request, id=0):
                 else:
                     vehicle = Vehicle.objects.get(id=vehicle_id)
 
-                    ParkMovement.objects.create(entry_date=entry_date, vehicle_id=vehicle)
-                    
+                    park_movement = ParkMovement.objects.create(entry_date=entry_date, vehicle_id=vehicle, value=0)
+
                     vehicle_info = get_vehicle_info_by_id(vehicle_id)
                     monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
-
+                    
+                    
+                    if not monthly_payer:
+                        exit_date = entry_date
+                        value = calculate_parking_fee(entry_date, exit_date)
+                    
                     return JsonResponse({
                         "message": "Entry Registered",
                         "customer_id": vehicle_info['customer_id'],
                         "plate": vehicle_info['plate'],
-                        "monthlyPayer": monthly_payer
+                        "monthlyPayer": monthly_payer,
+                        "value": value
                     }, status=200)
 
         except Exception as e:

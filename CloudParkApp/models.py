@@ -105,13 +105,16 @@ class ParkMovement(models.Model):
     vehicle_id = models.ForeignKey(Vehicle, on_delete=models.CASCADE, null=True)
     value = models.FloatField(null=True)
 
-def calculate_parking_fee(entry_datetime, exit_datetime, contract_rules):
+def calculate_parking_fee(entry_datetime, exit_datetime):
+    # Lógica para calcular o valor com base nas regras do contrato
     duration_minutes = (exit_datetime - entry_datetime).total_seconds() / 60
-    total_fee = 0.0
 
-    for rule in contract_rules:
-        if duration_minutes <= rule['until']:
-            total_fee = rule['value']
-            break
+    # Obtém a regra do contrato correspondente à duração
+    rule = ContractRule.objects.filter(until__gte=duration_minutes).order_by('until').first()
 
-    return total_fee
+    if rule:
+        return rule.value
+    else:
+        # Caso a duração seja maior que o limite máximo da tabela, usar o valor do limite máximo
+        max_rule = ContractRule.objects.order_by('-until').first()
+        return max_rule.value if max_rule else 0
