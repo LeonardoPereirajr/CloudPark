@@ -113,5 +113,3 @@ Install the required dependencies
 Apply migrations to create the database schema: python manage.py migrate  
 Run the development server:python manage.py runserver  
 Access the API endpoints at http://localhost:8000/api/v1/.  
-
-ARQUIVO INSOMNIA: ANEXO
