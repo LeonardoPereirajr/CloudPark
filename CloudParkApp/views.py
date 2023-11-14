@@ -265,11 +265,13 @@ def park_movement_api(request, id=0):
                     ParkMovement.objects.create(entry_date=entry_date, vehicle_id=vehicle)
                     
                     vehicle_info = get_vehicle_info_by_id(vehicle_id)
+                    monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
 
                     return JsonResponse({
                         "message": "Entry Registered",
                         "customer_id": vehicle_info['customer_id'],
-                        "plate": vehicle_info['plate']
+                        "plate": vehicle_info['plate'],
+                        "monthlyPayer": monthly_payer
                     }, status=200)
 
         except Exception as e:
