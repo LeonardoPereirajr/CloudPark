@@ -1,11 +1,16 @@
+from datetime import datetime, timedelta
+
+from django.http import HttpResponseBadRequest
+from .models import ContractRule, calculate_parking_fee, get_vehicle_info_by_id
 from django.shortcuts import render
 
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from django.db.models import Q
 
-from .models import Customer, Vehicle, Plan, CustomerPlan, Contract, ContractRule, ParkMovement
+from .models import Customer, Vehicle, Plan, CustomerPlan, Contract, ContractRule, ParkMovement, calculate_value_based_on_rules
 from .serializers import (
     CustomerSerializer,
     VehicleSerializer,
@@ -164,7 +169,7 @@ def contract_api(request, id=None):
 
     elif request.method == 'POST':
         contract_data = JSONParser().parse(request)
-        contract_rules_data = contract_data.pop('contract_rules', [])  # Remove as regras do contrato do JSON
+        contract_rules_data = contract_data.pop('contract_rules', [])  
 
         contract_serializer = ContractSerializer(data=contract_data)
         if contract_serializer.is_valid():
@@ -215,3 +220,50 @@ def contract_api(request, id=None):
 
         contract.delete()
         return JsonResponse("Deleted Successfully!!", safe=False)
+
+@csrf_exempt
+def park_movement_api(request, id=0):
+    if request.method == 'GET':
+        park_movements = ParkMovement.objects.all()
+        park_movement_serializer = ParkMovementSerializer(park_movements, many=True)
+        return JsonResponse(park_movement_serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        park_movement_data = JSONParser().parse(request)
+        vehicle_id = park_movement_data.get('vehicle_id')
+        print(f"vehicle_id: {vehicle_id}")
+
+        if vehicle_id:
+            vehicle_info = get_vehicle_info_by_id(vehicle_id)
+
+        if vehicle_info:
+            plate = vehicle_info['plate']
+            print(f"plate: {plate}")
+            customer_id = vehicle_info['customer_id']
+            print(f"customer_id: {vehicle_id}")
+
+        existing_vehicle = Vehicle.objects.filter(plate=plate).first()
+
+        if existing_vehicle:
+            if existing_vehicle.customer_id is None:
+                vehicle_serializer = VehicleSerializer(existing_vehicle, data=park_movement_data)
+                if vehicle_serializer.is_valid():
+                    vehicle_serializer.save()
+                    return JsonResponse("Added Successfully!!", safe=False)
+                return JsonResponse("Failed to Add.", safe=False)
+            else:
+                return JsonResponse("Vehicle already linked to a customer.", safe=False)
+        else:
+            print(f"park_movement_data: {park_movement_data}")
+            vehicle_serializer = VehicleSerializer(data={'id': park_movement_data['vehicle_id']})
+            print(f"vehicle_serializer: {vehicle_serializer.is_valid()}")
+            if vehicle_serializer.is_valid():
+                customer_id = get_customer_id_by_vehicle_id(park_movement_data.get('vehicle_id'))
+                print(f"vehicle.customer_id: {customer_id}")
+                # Continue com a lógica de salvamento do veículo
+                if customer_id:
+                    vehicle_serializer.save(customer_id=customer_id)
+                    return JsonResponse("Added Successfully!!", safe=False)
+                else:
+                    return HttpResponseBadRequest("Failed to Add. Customer ID not found for the given Vehicle ID.")
+            return JsonResponse("Failed to Add.", safe=False)
