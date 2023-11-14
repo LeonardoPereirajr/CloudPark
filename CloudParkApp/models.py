@@ -44,6 +44,17 @@ class Contract(models.Model):
     max_value = models.FloatField(null=True)
     rules = models.ManyToManyField('ContractRule', blank=True)
 
+def get_max_value_from_contract():
+    try:
+        last_rule = ContractRule.objects.order_by('-id').first()
+
+        if last_rule:
+            return last_rule.until
+        else:
+            return None
+    except ContractRule.DoesNotExist:
+        return None
+
 class ContractRule(models.Model):
     id = models.AutoField(primary_key=True)
     contract_id = models.ForeignKey(Contract, on_delete=models.CASCADE)

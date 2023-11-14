@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timezone
 import json
+from django.utils.timezone import now
 
 from django.http import HttpResponseBadRequest
-from .models import ContractRule, calculate_parking_fee, get_vehicle_info_by_id, has_monthly_plan
+from .models import ContractRule, calculate_parking_fee, get_max_value_from_contract, get_vehicle_info_by_id, has_monthly_plan
 from django.shortcuts import render
 
 from django.shortcuts import render
@@ -250,6 +251,20 @@ def park_movement_api(request, id=0):
             existing_movement = ParkMovement.objects.filter(vehicle_id=vehicle_id, exit_date__isnull=True).first()
 
             value = 0
+            monthly_payer = False
+            card_id = park_data.get('card_id', None)
+            vehicle_contract_max_minutes = get_max_value_from_contract()
+            print(f"vehicle_contract_max_minutes: {vehicle_contract_max_minutes}")
+            if card_id:
+                try:
+                    customer = Customer.objects.get(card_id=card_id)
+
+                    if ParkMovement.objects.filter(vehicle_id__customer_id=customer.id, exit_date__isnull=True).exclude(vehicle_id=vehicle_id).exists():
+                        return JsonResponse({"error": "Card is already associated with a vehicle in the parking lot."}, status=400)
+                    
+                except Customer.DoesNotExist:
+                    return JsonResponse({"error": "Invalid card_id. Vehicle entry denied."}, status=400)
+
             if exit_date:
                 if existing_movement:
                     existing_movement.exit_date = exit_date
@@ -257,15 +272,26 @@ def park_movement_api(request, id=0):
 
                     vehicle_info = get_vehicle_info_by_id(vehicle_id)
                     monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
-                    if not monthly_payer:
-                        value = calculate_parking_fee(existing_movement.entry_date, exit_date)
-                    
+
+                    time_difference = (exit_date - existing_movement.entry_date).total_seconds() / 60  
+                    print(f"time_difference: {time_difference}")
+                    if not monthly_payer:    
+                        if time_difference > vehicle_contract_max_minutes:
+                            print(f"time_difference Entrou por ser maior: {time_difference}")
+                            contract = Contract.objects.first()  
+                            if contract:
+                                value = contract.max_value
+                        else:
+                            print(f"time_difference o valor é menor: {time_difference}")
+                            value = calculate_parking_fee(existing_movement.entry_date, exit_date)
+                        
                     return JsonResponse({
                         "message": "Exit Registered",
                         "customer_id": vehicle_info['customer_id'],
                         "plate": vehicle_info['plate'],
                         "monthlyPayer": monthly_payer,
-                        "value": value
+                        "value": value,
+                        "card_id": card_id
                     }, status=200)
                 else:
                     return JsonResponse({"error": "Vehicle not found in the parking lot"}, status=404)
@@ -273,15 +299,25 @@ def park_movement_api(request, id=0):
                 if existing_movement:
                     return JsonResponse({"error": "Vehicle is already in the parking lot"}, status=400)
                 else:
+                    if card_id:
+                        if not Customer.objects.filter(card_id=card_id).exists():
+                            return JsonResponse({"error": "Invalid card_id. Vehicle entry denied."}, status=400)
+
                     vehicle = Vehicle.objects.get(id=vehicle_id)
 
                     park_movement = ParkMovement.objects.create(entry_date=entry_date, vehicle_id=vehicle, value=0)
 
                     vehicle_info = get_vehicle_info_by_id(vehicle_id)
                     monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
-                    
-                    
-                    if not monthly_payer:
+
+                    time_difference = (now() - entry_date).total_seconds() / 60 
+                    print(f"time_difference: {time_difference}")
+                    if time_difference > vehicle_contract_max_minutes:
+                        print(f"time_difference entrou porque é maior na segunda: {time_difference}")
+                        contract = Contract.objects.first()  
+                        if contract:
+                            value = contract.max_value
+                    else:
                         exit_date = entry_date
                         value = calculate_parking_fee(entry_date, exit_date)
                     
@@ -290,7 +326,8 @@ def park_movement_api(request, id=0):
                         "customer_id": vehicle_info['customer_id'],
                         "plate": vehicle_info['plate'],
                         "monthlyPayer": monthly_payer,
-                        "value": value
+                        "value": value,
+                        "card_id": card_id
                     }, status=200)
 
         except Exception as e:
