@@ -24,30 +24,6 @@ def get_vehicle_info_by_id(vehicle_id):
     except Vehicle.DoesNotExist:
         return None
 
-def get_plan_description_by_vehicle_id(vehicle_id):
-    print(f"vehicle_id: {vehicle_id}")
-    try:
-        vehicle_info = get_vehicle_info_by_id(vehicle_id)
-
-        if vehicle_info:
-            customer_plan = CustomerPlan.objects.filter(customer_id=vehicle_info['customer_id']).first()
-            print(f"customer_plan: {customer_plan}")
-            if customer_plan:
-                plan_id = customer_plan.plan_id
-                plan_description = Plan.objects.filter(id=plan_id).values('description').first()
-                print(f"plan_description: {plan_description}")
-                if plan_description:
-                    return plan_description['description']
-                else:
-                    return None
-            else:
-                return None
-        else:
-            return None
-    except Exception as e:
-        print(f"Error getting plan description: {str(e)}")
-        return None
-
 class Plan(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=50)
@@ -68,30 +44,6 @@ class Contract(models.Model):
     max_value = models.FloatField(null=True)
     rules = models.ManyToManyField('ContractRule', blank=True)
 
-@staticmethod
-def get_rotative_contract():
-        try:
-            return Contract.objects.get(description='Contrato Rotativo')
-        except Contract.DoesNotExist:
-            return Contract.objects.create(description='Contrato Rotativo', max_value=0.0)
-
-def calculate_value_based_on_rules(self, duration_minutes):
-        rules = self.contractrule_set.order_by('until')
-
-        total_value = 0.0
-        remaining_duration = duration_minutes
-
-        for rule in rules:
-            if remaining_duration <= rule.until:
-                total_value += remaining_duration * rule.value
-                break
-            else:
-                total_value += rule.until * rule.value
-                remaining_duration -= rule.until
-
-        return min(total_value, self.max_value)
-
-
 class ContractRule(models.Model):
     id = models.AutoField(primary_key=True)
     contract_id = models.ForeignKey(Contract, on_delete=models.CASCADE)
@@ -106,15 +58,13 @@ class ParkMovement(models.Model):
     value = models.FloatField(null=True)
 
 def calculate_parking_fee(entry_datetime, exit_datetime):
-    # Lógica para calcular o valor com base nas regras do contrato
     duration_minutes = (exit_datetime - entry_datetime).total_seconds() / 60
 
-    # Obtém a regra do contrato correspondente à duração
     rule = ContractRule.objects.filter(until__gte=duration_minutes).order_by('until').first()
 
     if rule:
         return rule.value
     else:
-        # Caso a duração seja maior que o limite máximo da tabela, usar o valor do limite máximo
+        
         max_rule = ContractRule.objects.order_by('-until').first()
         return max_rule.value if max_rule else 0

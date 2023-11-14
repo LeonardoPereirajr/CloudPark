@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import json
 
 from django.http import HttpResponseBadRequest
-from .models import ContractRule, calculate_parking_fee, get_plan_description_by_vehicle_id, get_rotative_contract, get_vehicle_info_by_id, has_monthly_plan
+from .models import ContractRule, calculate_parking_fee, get_vehicle_info_by_id, has_monthly_plan
 from django.shortcuts import render
 
 from django.shortcuts import render
@@ -12,7 +12,7 @@ from django.http.response import JsonResponse
 from django.db.models import Q
 from django.utils.dateparse import parse_datetime
 
-from .models import Customer, Vehicle, Plan, CustomerPlan, Contract, ContractRule, ParkMovement, calculate_value_based_on_rules
+from .models import Customer, Vehicle, Plan, CustomerPlan, Contract, ContractRule, ParkMovement
 from .serializers import (
     CustomerSerializer,
     VehicleSerializer,
@@ -249,14 +249,17 @@ def park_movement_api(request, id=0):
 
             existing_movement = ParkMovement.objects.filter(vehicle_id=vehicle_id, exit_date__isnull=True).first()
 
+            value = 0
             if exit_date:
                 if existing_movement:
                     existing_movement.exit_date = exit_date
                     existing_movement.save()
 
-                    value = calculate_parking_fee(existing_movement.entry_date, exit_date)
                     vehicle_info = get_vehicle_info_by_id(vehicle_id)
                     monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
+                    if not monthly_payer:
+                        value = calculate_parking_fee(existing_movement.entry_date, exit_date)
+                    
                     return JsonResponse({
                         "message": "Exit Registered",
                         "customer_id": vehicle_info['customer_id'],
