@@ -23,7 +23,6 @@ import { SharedService } from './shared.service';
 
 @NgModule({
   declarations: [
-    AppComponent,
     ContractComponent,
     AddEditContractComponent,
     ShowContractComponent,
@@ -47,6 +46,6 @@ import { SharedService } from './shared.service';
     AppRoutingModule,
   ],
   providers: [SharedService],
-  bootstrap: [AppComponent]
+  bootstrap: []
 })
 export class AppModule { }
