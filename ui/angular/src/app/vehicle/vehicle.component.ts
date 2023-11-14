@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-vehicle',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './vehicle.component.html',
   styleUrl: './vehicle.component.css'
 })
-export class VehicleComponent {
+export class VehicleComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
 
 }
+
