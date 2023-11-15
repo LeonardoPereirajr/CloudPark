@@ -151,7 +151,8 @@ Contract API
 
 Park Movement API
 - GET /api/v1/parkmovement/: Get a list of all park movements.
-  ![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/e2fce81d-d320-4ea9-a4ea-878d55315add)
+![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/56a12e69-bdb5-4743-afaa-f2d8342c3ca7)
+
 
 
 - POST /api/v1/parkmovement/: Register a new park movement.
