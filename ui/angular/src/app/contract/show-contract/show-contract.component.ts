@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedService } from '../../shared.service';
 
 @Component({
   selector: 'app-show-contract',
@@ -9,5 +10,19 @@ import { CommonModule } from '@angular/common';
   styleUrl: './show-contract.component.css'
 })
 export class ShowContractComponent {
+
+  constructor(private service: SharedService) { }
+
+  ContractList: any=[] ;
+
+  ngOnInit(): void {
+    this.refreshContractList();
+  }
+
+  refreshContractList() {
+    this.service.getContracts().subscribe(data => {
+      this.ContractList = data;
+    });
+  }
 
 }

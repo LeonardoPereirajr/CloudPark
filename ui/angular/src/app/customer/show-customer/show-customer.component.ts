@@ -6,7 +6,7 @@ import { SharedService } from '../../shared.service';
 @Component({
   selector: 'app-show-customer',
   templateUrl: './show-customer.component.html',
-  styleUrl: './show-customer.component.css'
+  styleUrls: ['./show-customer.component.css']
 })
 export class ShowCustomerComponent  {
 

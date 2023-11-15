@@ -4,10 +4,14 @@ import { NgModule } from '@angular/core';
 import { ShowCustomerComponent } from './customer/show-customer/show-customer.component';
 import { AddEditCustomerComponent } from './customer/add-edit-customer/add-edit-customer.component';
 import { VehicleComponent } from './vehicle/vehicle.component';
+import { ContractComponent } from './contract/contract.component';
+import { PlanComponent } from './plan/plan.component';
 
 export const routes: Routes = [
   { path: 'customer', component: CustomerComponent },
   { path: 'vehicle', component: VehicleComponent },
+  { path: 'contract', component: ContractComponent},
+  { path: 'plan', component: PlanComponent},
 ];
 
 NgModule({
@@ -16,6 +20,9 @@ NgModule({
     CustomerComponent,
     ShowCustomerComponent,
     AddEditCustomerComponent,
+    VehicleComponent,
+    ContractComponent,
+    PlanComponent
   ],
 
   imports: [RouterModule.forRoot(routes)],

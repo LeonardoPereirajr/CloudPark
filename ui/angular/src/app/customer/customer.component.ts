@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ShowCustomerComponent } from './show-customer/show-customer.component';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-customer',

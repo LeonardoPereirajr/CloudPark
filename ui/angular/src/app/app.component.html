@@ -9,7 +9,8 @@
 
   <div class="row">
     <!-- Menu Lateral -->
-    <div class="col-md-2  text-light">
+
+    <div class="col-md-2 ">
       <div class="nav flex-column">
         <button class="btn btn-secondary mb-2" routerLink="vehicle">Veículo</button>
         <button class="btn btn-secondary mb-2" routerLink="customer">Cliente</button>
@@ -32,13 +33,13 @@
               <th>Valor</th>
             </tr>
           </thead>
-
           <tbody>
             <tr>
               <td>01/01/2020</td>
               <td>ABC-1234</td>
               <td>123456789</td>
               <td>R$ 10,00</td>
+              <router-outlet></router-outlet>
             <tr *ngFor="let vehicle of vehicleList">
               <td>{{ vehicle.entryDate }}</td>
               <td>{{ vehicle.plate }}</td>
@@ -55,7 +56,7 @@
         <button class="btn btn-danger" [disabled]="true">Saída</button>
       </div>
 
-      <router-outlet></router-outlet>
+
     </div>
   </div>
 </div>
