@@ -6,15 +6,18 @@ import { CustomerComponent } from './customer/customer.component';
 import { SharedService } from './shared.service';
 import {HttpClientModule} from '@angular/common/http';
 import {FormsModule,ReactiveFormsModule} from '@angular/forms';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @NgModule({
   declarations: [
-    AddEditCustomerComponent,
-    ShowCustomerComponent,
     CustomerComponent,
+    ShowCustomerComponent,
+    AddEditCustomerComponent,
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
+    BrowserModule,
     CommonModule,
     HttpClientModule,
     FormsModule,
