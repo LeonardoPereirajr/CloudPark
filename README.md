@@ -159,7 +159,7 @@ Park Movement API
 
 
 Usage
-Clone the repository: git clone <repository-url>  
+Clone the repository: git clone [<repository-url>](https://github.com/LeonardoPereirajr/CloudPark.git)  
 
 
 Install the required dependencies  
