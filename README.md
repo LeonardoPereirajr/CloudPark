@@ -1,5 +1,13 @@
 # CloudPark
 
+Navegador:
+![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/fc73e95f-8a1b-4d5b-b780-fba03755457e)
+
+
+Mobile
+![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/458ffe88-ba3b-4292-a587-f56baaf835df)
+
+
 ## Parking Management System
 This project is a Parking Management System implemented using Django, a high-level Python web framework. The system provides APIs for managing customers, vehicles, plans, customer plans, contracts, and park movements.
 
