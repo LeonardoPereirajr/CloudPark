@@ -1,11 +1,12 @@
 # CloudPark
 
 Navegador:
-![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/fc73e95f-8a1b-4d5b-b780-fba03755457e)
+![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/2d1b6d4d-1e3e-4f2b-933a-8aadee3a2833)
+
 
 
 Mobile
-![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/458ffe88-ba3b-4292-a587-f56baaf835df)
+![image](https://github.com/LeonardoPereirajr/CloudPark/assets/30580018/15e331e2-cfe0-4322-a57f-3099c453b197)
 
 
 ## Parking Management System
