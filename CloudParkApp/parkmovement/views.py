@@ -27,13 +27,16 @@ def park_movement_api(request, id=0):
         for movement in movement_serializer.data:
             entry_date = parse_datetime(movement['entry_date'])
             exit_date = parse_datetime(movement['exit_date']) if movement['exit_date'] else now()
-            
+
+            vehicle_id = movement['vehicle_id']
+            vehicle_info = get_vehicle_info_by_id(vehicle_id)
+            monthly_payer = has_monthly_plan(vehicle_info['customer_id'])
+
             time_difference = (exit_date - entry_date).total_seconds() / 60
 
             vehicle_contract_max_minutes = get_max_value_from_contract()
 
             value = 0
-            monthly_payer = False
 
             if not monthly_payer:    
                 if time_difference > vehicle_contract_max_minutes:
