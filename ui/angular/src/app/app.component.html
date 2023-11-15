@@ -27,7 +27,8 @@
 
           <thead>
             <tr>
-              <th>Data de Entrada</th>
+              <th>Data/hora de Entrada</th>
+              <th>Data/hora de Saída</th>
               <th>Placa</th>
               <th>Cartão</th>
               <th>Valor</th>
@@ -35,13 +36,15 @@
           </thead>
           <tbody>
             <tr>
-              <td>01/01/2020</td>
+              <td>2023-11-20T12:00:00Z</td>
+              <td>2023-11-20T18:00:00Z</td>
               <td>ABC-1234</td>
               <td>123456789</td>
-              <td>R$ 10,00</td>
+              <td>R$ 30,00</td>
               <router-outlet></router-outlet>
             <tr *ngFor="let vehicle of vehicleList">
               <td>{{ vehicle.entryDate }}</td>
+              <td>{{ vehicle.exitDate}}</td>
               <td>{{ vehicle.plate }}</td>
               <td>{{ vehicle.card }}</td>
               <td>{{ vehicle.value }}</td>

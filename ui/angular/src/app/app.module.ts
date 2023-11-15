@@ -30,5 +30,6 @@ import { AddEditVehicleComponent } from './vehicle/add-edit-vehicle/add-edit-veh
     ReactiveFormsModule
   ],
   providers: [SharedService],
+  bootstrap: [CustomerComponent]
 })
 export class AppModule { }
