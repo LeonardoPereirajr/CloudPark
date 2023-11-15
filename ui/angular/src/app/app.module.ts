@@ -11,6 +11,9 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { VehicleComponent } from './vehicle/vehicle.component';
 import { ShowVehicleComponent } from './vehicle/show-vehicle/show-vehicle.component';
 import { AddEditVehicleComponent } from './vehicle/add-edit-vehicle/add-edit-vehicle.component';
+import { ParkmovementComponent } from './parkmovement/parkmovement.component';
+import { ShowParkComponent } from './parkmovement/show-park/show-park.component';
+import { AddParkComponent } from './parkmovement/add-park/add-park.component';
 
 @NgModule({
   declarations: [
@@ -20,10 +23,13 @@ import { AddEditVehicleComponent } from './vehicle/add-edit-vehicle/add-edit-veh
     VehicleComponent,
     ShowVehicleComponent,
     AddEditVehicleComponent,
+    ParkmovementComponent,
+    ShowParkComponent,
+    AddParkComponent,
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
-    BrowserModule,
+  BrowserModule,
     CommonModule,
     HttpClientModule,
     FormsModule,
