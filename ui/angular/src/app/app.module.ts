@@ -8,12 +8,18 @@ import {HttpClientModule} from '@angular/common/http';
 import {FormsModule,ReactiveFormsModule} from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { VehicleComponent } from './vehicle/vehicle.component';
+import { ShowVehicleComponent } from './vehicle/show-vehicle/show-vehicle.component';
+import { AddEditVehicleComponent } from './vehicle/add-edit-vehicle/add-edit-vehicle.component';
 
 @NgModule({
   declarations: [
     CustomerComponent,
     ShowCustomerComponent,
     AddEditCustomerComponent,
+    VehicleComponent,
+    ShowVehicleComponent,
+    AddEditVehicleComponent,
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [

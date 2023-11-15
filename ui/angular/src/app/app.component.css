@@ -1,12 +1,11 @@
-.background-container {
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 20px;
-  text-align: center;
+.center-image {
+  max-width: 100%;
+  height: auto;
 }
 
-.btn-outline-light {
-  color: #007bff;
-  background-color: #ffffff;
-  border-color: #ffffff;
+.bg-primary {
+  padding-top: 20px;
+}
+.main-container {
+  background-color: #c3d2e1;
 }
